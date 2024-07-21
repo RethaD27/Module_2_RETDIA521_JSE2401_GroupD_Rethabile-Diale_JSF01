@@ -64,6 +64,29 @@
                   >Wishlist</a
                 >
               </li>
+              <li class="hidden lg:block md:block relative">
+                <div class="t-0 absolute left-3 -top-4">
+                  <p
+                    class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white"
+                  >
+                    2
+                  </p>
+                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  class="file: h-6 w-6 stroke-white cursor-pointer"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                  />
+                </svg>
+              </li>
               <li>
                 <a
                   href="/cart"
@@ -141,22 +164,24 @@
               class="text-gray-700 mt-2"
               x-text="'Rating: ' + product.rating.rate + ' (' + product.rating.count + ' reviews)'"
             ></p>
-            <button @click.stop="toggleFavorite(product.id)" class="">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                class="w-6 h-6 text-gray-300"
-                :class="{'text-gray-500': isFavorite(product.id)}"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                />
-              </svg>
-            </button>
-            <button class="bg-blue-600 px-4 py-1 text-white">
-              Add To Cart
-            </button>
+            <div @click.stop>
+              <button @click="toggleFavorite(product.id)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  class="w-6 h-6 text-red-600"
+                  :class="{'text-gray-500': !isFavorite(product.id)}"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  />
+                </svg>
+              </button>
+              <button class="bg-blue-600 px-4 py-1 text-white mt-2">
+                Add To Cart
+              </button>
+            </div>
           </div>
         </template>
       </div>
