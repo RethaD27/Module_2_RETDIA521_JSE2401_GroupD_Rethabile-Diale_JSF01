@@ -110,7 +110,11 @@
     <!-- Main Content -->
     <div class="container mx-auto p-6">
       <div class="flex justify-between mb-4">
-        <select x-model="selectedCategory" class="border p-2 rounded">
+        <select
+          x-model="selectedCategory"
+          @change="searchProducts"
+          class="border p-2 rounded"
+        >
           <option value="">All Categories</option>
           <template x-for="category in categories" :key="category">
             <option :value="category" x-text="category"></option>
@@ -132,7 +136,11 @@
           </button>
         </div>
 
-        <select x-model="sortOrder" class="border p-2 rounded">
+        <select
+          x-model="sortOrder"
+          @change="searchProducts"
+          class="border p-2 rounded"
+        >
           <option value="">Sort by Price</option>
           <option value="asc">Lowest to Highest</option>
           <option value="desc">Highest to Lowest</option>
@@ -180,26 +188,41 @@
             <div @click.stop>
               <button @click="toggleFavorite(product.id)">
                 <svg
+                  x-show="isFavorite(product.id)"
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  :class="{'text-red-600': product.isFavorite, 'text-gray-400': !product.isFavorite}"
+                  viewBox="0 0 24 24"
+                  fill="red"
                   class="w-6 h-6"
                 >
                   <path
                     fill-rule="evenodd"
-                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 015.656 5.656l-6.364 6.364a.75.75 0 01-1.06 0L3.172 10.828a4 4 0 010-5.656z"
+                    d="M12 4.318c1.89-1.768 4.955-1.735 6.797.24 1.885 2.021 1.89 5.27.018 7.296L12 21.842l-6.815-9.99c-1.872-2.026-1.867-5.275.018-7.296 1.842-1.975 4.908-2.008 6.797-.239z"
                     clip-rule="evenodd"
                   />
                 </svg>
-              </button>
-              <button
-                @click="addToCart(product)"
-                class="bg-blue-600 text-white px-2 py-1 rounded mt-2"
-              >
-                Add to Cart
+                <svg
+                  x-show="!isFavorite(product.id)"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.318c1.89-1.768 4.955-1.735 6.797.24 1.885 2.021 1.89 5.27.018 7.296L12 21.842l-6.815-9.99c-1.872-2.026-1.867-5.275.018-7.296 1.842-1.975 4.908-2.008 6.797-.239z"
+                  />
+                </svg>
               </button>
             </div>
+            <button
+              @click.stop
+              class="bg-blue-600 text-white px-4 py-2 rounded mt-4"
+            >
+              Add to Cart
+            </button>
           </div>
         </template>
       </div>
@@ -207,33 +230,46 @@
 
     <!-- Modal -->
     <div
-      x-show="isModalOpen"
-      class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center"
-      x-transition:enter="transition ease-out duration-300"
-      x-transition:enter-start="opacity-0 transform scale-95"
-      x-transition:enter-end="opacity-100 transform scale-100"
-      x-transition:leave="transition ease-in duration-200"
-      x-transition:leave-start="opacity-100 transform scale-100"
-      x-transition:leave-end="opacity-0 transform scale-95"
+      x-show="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
       <div
-        class="bg-white p-4 rounded shadow-lg w-full max-w-lg"
-        @click.away="closeModal()"
+        class="bg-white p-6 rounded-lg shadow-lg relative w-full max-w-md mx-4"
       >
-        <h2 class="text-2xl font-bold mb-4" x-text="modalProduct.title"></h2>
-        <div class="flex justify-center mb-4">
-          <img :src="modalProduct.image" alt="" class="h-48 object-cover" />
-        </div>
-        <p class="text-gray-700 mb-2" x-text="'$' + modalProduct.price"></p>
-        <p class="text-gray-500 mb-2" x-text="modalProduct.category"></p>
-        <p class="text-gray-700 mb-4" x-text="modalProduct.description"></p>
-        <div class="text-gray-700 mb-4 flex items-center">
+        <button
+          @click="closeModal()"
+          class="absolute top-0 right-0 m-4 text-gray-500 hover:text-gray-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <h2 class="text-xl font-bold mb-4" x-text="selectedProduct?.title"></h2>
+        <img
+          :src="selectedProduct?.image"
+          alt=""
+          class="h-48 object-cover mb-4 mx-auto"
+        />
+        <p class="text-gray-700" x-text="'$' + selectedProduct?.price"></p>
+        <p class="text-gray-500" x-text="selectedProduct?.category"></p>
+        <div class="text-gray-700 mt-2 flex items-center justify-center">
           <template x-for="i in 5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
               viewBox="0 0 20 20"
-              :class="{'text-yellow-400': i <= Math.round(modalProduct.rating.rate), 'text-gray-400': i > Math.round(modalProduct.rating.rate)}"
+              :class="{'text-yellow-400': i <= Math.round(selectedProduct?.rating?.rate), 'text-gray-400': i > Math.round(selectedProduct?.rating?.rate)}"
               class="w-4 h-4"
             >
               <path
@@ -241,90 +277,86 @@
               />
             </svg>
           </template>
-          <span x-text="`(${modalProduct.rating.count} reviews)`"></span>
+          <span x-text="`(${selectedProduct?.rating?.count} reviews)`"></span>
         </div>
-        <div class="flex justify-between">
-          <button
-            @click="closeModal()"
-            class="bg-gray-500 text-white px-4 py-2 rounded"
-          >
-            Close
-          </button>
-          <button
-            @click="addToCart(modalProduct)"
-            class="bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            Add to Cart
-          </button>
-        </div>
+        <button
+          @click="toggleFavorite(selectedProduct?.id)"
+          class="bg-blue-600 text-white px-4 py-2 rounded mt-4 w-full"
+        >
+          Add to Wishlist
+        </button>
       </div>
     </div>
 
     <script>
       function store() {
         return {
-          products: [],
-          categories: [],
           searchQuery: "",
-          selectedCategory: "",
           sortOrder: "",
-          isModalOpen: false,
-          modalProduct: {},
-          loading: true,
+          selectedCategory: "",
+          loading: false,
+          products: [],
           filteredProductsList: [],
+          favorites: [],
+          showModal: false,
+          selectedProduct: null,
+          categories: [],
 
-          init() {
-            this.fetchProducts();
-          },
-
-          fetchProducts() {
+          async fetchProducts() {
             this.loading = true;
-            fetch("https://fakestoreapi.com/products")
-              .then((res) => res.json())
-              .then((data) => {
-                this.products = data;
-                this.filteredProductsList = data;
-                this.categories = [
-                  ...new Set(data.map((product) => product.category)),
-                ];
-                this.loading = false;
-              });
+            const response = await fetch("https://fakestoreapi.com/products");
+            const data = await response.json();
+            this.products = data;
+            this.filteredProductsList = data;
+            this.categories = [
+              ...new Set(data.map((product) => product.category)),
+            ];
+            this.loading = false;
           },
 
           searchProducts() {
-            this.filteredProductsList = this.products.filter((product) => {
-              return (
-                product.title
-                  .toLowerCase()
-                  .includes(this.searchQuery.toLowerCase()) &&
-                (this.selectedCategory === "" ||
-                  product.category === this.selectedCategory)
-              );
-            });
-
-            if (this.sortOrder === "asc") {
-              this.filteredProductsList.sort((a, b) => a.price - b.price);
-            } else if (this.sortOrder === "desc") {
-              this.filteredProductsList.sort((a, b) => b.price - a.price);
-            }
-          },
-
-          openModal(product) {
-            this.modalProduct = product;
-            this.isModalOpen = true;
-          },
-
-          closeModal() {
-            this.isModalOpen = false;
-          },
-
-          addToCart(product) {
-            alert("Added to cart: " + product.title);
+            this.filteredProductsList = this.products
+              .filter((product) => {
+                return (
+                  product.title
+                    .toLowerCase()
+                    .includes(this.searchQuery.toLowerCase()) &&
+                  (!this.selectedCategory ||
+                    product.category === this.selectedCategory)
+                );
+              })
+              .sort((a, b) => {
+                if (this.sortOrder === "asc") return a.price - b.price;
+                if (this.sortOrder === "desc") return b.price - a.price;
+                return 0;
+              });
           },
 
           toggleFavorite(productId) {
-            const product = this.products.find((p) => p.id === productId);
-            product.isFavorite = !product.isFavorite;
+            if (this.favorites.includes(productId)) {
+              this.favorites = this.favorites.filter((id) => id !== productId);
+            } else {
+              this.favorites.push(productId);
+            }
+          },
+
+          isFavorite(productId) {
+            return this.favorites.includes(productId);
+          },
+
+          openModal(product) {
+            this.selectedProduct = product;
+            this.showModal = true;
+          },
+
+          closeModal() {
+            this.showModal = false;
+            this.selectedProduct = null;
+          },
+
+          async init() {
+            await this.fetchProducts();
+            this.searchProducts();
           },
         };
       }
