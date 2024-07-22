@@ -110,41 +110,50 @@
     <!-- Main Content -->
     <div class="container mx-auto p-6">
       <div class="flex justify-between mb-4">
-        <select
-          x-model="selectedCategory"
-          @change="searchProducts"
-          class="border p-2 rounded"
-        >
-          <option value="">All Categories</option>
-          <template x-for="category in categories" :key="category">
-            <option :value="category" x-text="category"></option>
-          </template>
-        </select>
-
-        <div class="flex items-center">
-          <input
-            type="text"
-            x-model="searchQuery"
-            placeholder="Search products..."
-            class="border p-2 rounded-l"
-          />
-          <button
-            @click="searchProducts()"
-            class="bg-white text-black border border-l-0 p-2 rounded-r"
+        <div class="flex space-x-4">
+          <select
+            x-model="selectedCategory"
+            @change="searchProducts"
+            class="border p-2 rounded"
           >
-            Search
+            <option value="">All Categories</option>
+            <template x-for="category in categories" :key="category">
+              <option :value="category" x-text="category"></option>
+            </template>
+          </select>
+
+          <div class="flex items-center">
+            <input
+              type="text"
+              x-model="searchQuery"
+              placeholder="Search products..."
+              class="border p-2 rounded-l"
+            />
+            <button
+              @click="searchProducts()"
+              class="bg-white text-black border border-l-0 p-2 rounded-r"
+            >
+              Search
+            </button>
+          </div>
+
+          <select
+            x-model="sortOrder"
+            @change="searchProducts"
+            class="border p-2 rounded"
+          >
+            <option value="">Sort by Price</option>
+            <option value="asc">Lowest to Highest</option>
+            <option value="desc">Highest to Lowest</option>
+          </select>
+
+          <button
+            @click="resetFilters"
+            class="bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Reset
           </button>
         </div>
-
-        <select
-          x-model="sortOrder"
-          @change="searchProducts"
-          class="border p-2 rounded"
-        >
-          <option value="">Sort by Price</option>
-          <option value="asc">Lowest to Highest</option>
-          <option value="desc">Highest to Lowest</option>
-        </select>
       </div>
 
       <div class="loading text-center text-2xl" x-show="loading">
@@ -221,7 +230,7 @@
               @click.stop
               class="bg-blue-600 text-white px-4 py-2 rounded mt-4"
             >
-              Add to Cart
+              Add To Cart
             </button>
           </div>
         </template>
@@ -287,7 +296,7 @@
           @click="toggleFavorite(selectedProduct?.id)"
           class="bg-blue-600 text-white px-4 py-2 rounded mt-4 w-full"
         >
-          Add to Wishlist
+          Add To Cart
         </button>
       </div>
     </div>
@@ -334,6 +343,13 @@
                 if (this.sortOrder === "desc") return b.price - a.price;
                 return 0;
               });
+          },
+
+          resetFilters() {
+            this.searchQuery = "";
+            this.sortOrder = "";
+            this.selectedCategory = "";
+            this.searchProducts(); // Reapply default filtering and sorting
           },
 
           toggleFavorite(productId) {
