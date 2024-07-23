@@ -311,6 +311,34 @@
     </div>
 
     <script>
+      /**
+       * @typedef Product
+       * @type {object}
+       * @property {number} id - The unique identifier of the product.
+       * @property {string} title - The title of the product.
+       * @property {string} category - The category of the product.
+       * @property {number} price - The price of the product.
+       */
+
+      /**
+       * @typedef Store
+       * @type {object}
+       * @property {boolean} loading - Indicates if the store is loading data.
+       * @property {Product[]} products - The list of products.
+       * @property {string[]} categories - The list of product categories.
+       * @property {string} selectedCategory - The selected product category for filtering.
+       * @property {string} searchQuery - The search query for filtering products.
+       * @property {string} sortOrder - The sort order for the products ('asc' for ascending, 'desc' for descending).
+       * @property {boolean} isModalOpen - Indicates if the product details modal is open.
+       * @property {Product|null} selectedProduct - The currently selected product for viewing details.
+       * @property {boolean} modalLoading - Indicates if the modal is loading data.
+       * @property {Product[]} filteredProducts - The list of filtered products based on search and category filters.
+       */
+
+      /**
+       * Initializes the store object.
+       * @returns {Store} The store object with all methods and properties.
+       */
       function store() {
         return {
           loading: false,
@@ -321,9 +349,13 @@
           sortOrder: "",
           isModalOpen: false,
           selectedProduct: null,
-          modalLoading: false, // New state for modal loading
+          modalLoading: false,
           filteredProducts: [],
 
+          /**
+           * Initializes the store by fetching products and categories.
+           * @async
+           */
           async init() {
             this.loading = true;
             await this.fetchProducts();
@@ -331,6 +363,10 @@
             this.loading = false;
           },
 
+          /**
+           * Fetches the list of products from the API and updates the products and filteredProducts properties.
+           * @async
+           */
           async fetchProducts() {
             const response = await fetch("https://fakestoreapi.com/products");
             const data = await response.json();
@@ -338,6 +374,10 @@
             this.filteredProducts = data; // Set filtered products to all products initially
           },
 
+          /**
+           * Fetches the list of categories from the API and updates the categories property.
+           * @async
+           */
           async fetchCategories() {
             const response = await fetch(
               "https://fakestoreapi.com/products/categories"
@@ -346,6 +386,11 @@
             this.categories = data;
           },
 
+          /**
+           * Fetches the details of a specific product by its ID and updates the selectedProduct property.
+           * @param {number} productId - The ID of the product to fetch details for.
+           * @async
+           */
           async fetchProductDetails(productId) {
             this.modalLoading = true;
             const response = await fetch(
@@ -356,16 +401,26 @@
             this.modalLoading = false;
           },
 
+          /**
+           * Opens the product details modal and fetches the details of the selected product.
+           * @param {Product} product - The product to view details for.
+           */
           openModal(product) {
             this.isModalOpen = true;
             this.fetchProductDetails(product.id);
           },
 
+          /**
+           * Closes the product details modal and clears the selectedProduct property.
+           */
           closeModal() {
             this.isModalOpen = false;
             this.selectedProduct = null;
           },
 
+          /**
+           * Filters the products based on the search query and selected category, and sorts them based on the sort order.
+           */
           searchProducts() {
             const searchQuery = this.searchQuery.toLowerCase();
             const categoryFilter = this.selectedCategory.toLowerCase();
@@ -387,6 +442,9 @@
             }
           },
 
+          /**
+           * Resets the search query, selected category, and sort order, and restores the filtered products to the original list.
+           */
           resetFilters() {
             this.selectedCategory = "";
             this.searchQuery = "";
@@ -394,10 +452,18 @@
             this.filteredProducts = this.products;
           },
 
+          /**
+           * Adds a product to the cart.
+           * @param {Product} product - The product to add to the cart.
+           */
           addToCart(product) {
             console.log("Add to cart:", product);
           },
 
+          /**
+           * Getter for the list of filtered products.
+           * @returns {Product[]} The list of filtered products.
+           */
           get filteredProductsList() {
             return this.filteredProducts;
           },
