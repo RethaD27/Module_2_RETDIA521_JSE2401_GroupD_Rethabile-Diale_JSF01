@@ -1,0 +1,83 @@
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+  x-data="productGrid()"
+>
+  <template x-for="product in filteredProducts" :key="product.id">
+    <div
+      class="card bg-white border p-4 rounded shadow hover:shadow-lg transition-shadow duration-300 flex flex-col items-center"
+      @click="openModal(product)"
+    >
+      <div class="flex justify-center w-full mb-4">
+        <img :src="product.image" alt="" class="h-48 object-cover" />
+      </div>
+      <h3 class="text-lg font-bold text-black" x-text="product.title"></h3>
+      <p class="text-gray-700 font-bold" x-text="'$' + product.price"></p>
+      <span
+        class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10"
+        x-text="product.category"
+      ></span>
+      <div class="text-gray-700 mt-2 flex items-center">
+        <template x-for="i in 5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            :class="{'text-yellow-400': i <= Math.round(product.rating.rate), 'text-gray-400': i > Math.round(product.rating.rate)}"
+            class="w-4 h-4"
+          >
+            <path
+              d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.796a1 1 0 00.95.691h5.011c.969 0 1.372 1.24.588 1.81l-3.785 3.465a1 1 0 00-.29.949l1.563 4.797c.3.922-.755 1.688-1.538 1.116l-3.785-3.465a1 1 0 00-1.22 0l-3.785 3.465c-.782.572-1.837-.194-1.538-1.116l1.563-4.797a1 1 0 00-.29-.949l-3.785-3.465c-.784-.57-.38-1.81.588-1.81h5.012a1 1 0 00.95-.691L9.049 2.927z"
+            />
+          </svg>
+        </template>
+        <span class="text-gray-600 ml-2" x-text="product.rating.rate"></span>
+      </div>
+      <button
+        class="bg-white text-black mt-2 border px-4 py-2 rounded flex items-center space-x-2"
+        @click.stop="toggleWishlist(product)"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          :class="{'fill-red-500': wishlist.includes(product)}"
+          class="w-6 h-6 cursor-pointer"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16.5 3.75a5.998 5.998 0 00-9 0c-3.138 3.525-5.25 7.5-5.25 7.5s2.112 3.975 5.25 7.5a5.998 5.998 0 009 0c3.138-3.525 5.25-7.5 5.25-7.5s-2.112-3.975-5.25-7.5z"
+          />
+        </svg>
+        <span
+          x-text="wishlist.includes(product) ? 'Remove from Wishlist' : 'Add to Wishlist'"
+        ></span>
+      </button>
+    </div>
+  </template>
+</div>
+
+<script>
+  function productGrid() {
+    return {
+      wishlist: [],
+      async init() {
+        this.$watch("filteredProducts", () => {
+          // Initialize or update grid-specific logic if needed
+        });
+      },
+      toggleWishlist(product) {
+        if (this.wishlist.includes(product)) {
+          this.wishlist = this.wishlist.filter((p) => p !== product);
+        } else {
+          this.wishlist.push(product);
+        }
+      },
+      openModal(product) {
+        // Logic to open product modal
+      },
+    };
+  }
+</script>
